@@ -1,0 +1,158 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="description" content="Automatically generate quiz questions">
+  <meta name="theme-color" content="#00557b" />
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+  <link href="/static/new-age.css" rel="stylesheet">
+
+  <link href="/static/omega-age.css" rel="stylesheet">
+
+  <title>Quiz</title>
+</head>
+
+<div style="vertical-align: center; margin:auto; padding-top: 200px" class="form-group">
+  <h1 style="text-align: center; margin: auto; padding-bottom: 25px; font-size: 48px"><strong>Quiz</strong></h1>
+
+  <div style="text-align:center; margin: auto" class= "page-header">
+    <h7 style="font-size:20px" id="question" ></h7>
+  </div>
+
+
+
+  <form>
+    <div class="input-group-sm" style="padding-bottom: 25px">
+      <input type="text" style="text-align:center; margin: auto;margin-bottom: 25px; width: 70%" class="form-control" id="input-text" placeholder="Enter Answer">
+      <div style="text-align: center; margin: auto" class="input-group-btn">
+
+        <button type="button" id="check" class="btn btn-primary" onclick= "checkAnswer();" style="margin-right: 5px">Check</button>
+        <button type="button" id="next" class="btn btn-primary" onclick= "nextQuestion();" >Next</button>
+
+      </div>
+    </div>
+  </form>
+
+
+
+  <div style="text-align:center; margin: auto" class= "page-header">
+    <h7 style="font-size:20px" id="corAnsHeading">Oops! The Correct Answer is: </h7>
+    <h7 style="font-size:20px; color:lightgreen" id="corAns"> </h7>
+  </div>
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Quiz Results</h5>
+          <button type="button" class="close" dat-toggle= ="modal" data-target="#myModal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-title">
+            <h5 class="modal-title">You have successfully reviewed your notes
+            </div>
+
+          <p> Correct Answers </p>
+          <br>
+          <p> Incorrect Answers </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+
+
+
+
+
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<!-- BS JavaScript -->
+
+
+
+  <script type="text/javascript">
+    var i = 0;
+    var jsonarr = '{{ jsonarr|tojson }}';
+
+    var nextButton = document.getElementById("next");
+    var checkButton = document.getElementById("check");
+    var inputText = document.getElementById("input-text");
+    var modal = document.getElementById("exampleModalCenter");
+    var correctAns = document.getElementById("corAns");
+
+    var numCorrect = 0;
+    var numWrong = 0;
+
+    //modal.disabled = true;
+    nextButton.disabled = true;
+    correctAns.innerHTML = "";
+    document.getElementById("corAnsHeading").innerHTML="";
+
+    console.log(jsonarr);
+    jsonarr = jsonarr.substring(1, jsonarr.length - 1);
+    var arr = JSON.parse(jsonarr);
+    console.log(arr);
+
+    var questionDisplay = document.getElementById("question");
+    questionDisplay.innerHTML = arr[i][0];
+
+    inputText.addEventListener("keyup", function(event){
+      if(event.keyCode === 13){
+        checkAnswer();
+      }
+    });
+
+    function checkAnswer(){
+      if(inputText.value.toLowerCase() == arr[i][1]){
+        inputText.style.backgroundColor = "lightgreen";
+        nextButton.disabled = false;
+        checkButton.disabled = true;
+        numCorrect++;
+        console.log("coerwer");
+      }
+      else {
+        inputText.style.backgroundColor = "rgb(240,50,50)";
+        inputText.addEventListener('input', function(evt){ this.style.backgroundColor="white"});
+        inputText.value = '';
+        numWrong++;
+        correctAns.innerHTML = arr[i][1];
+        document.getElementById("corAnsHeading").innerHTML="Oops! The Correct Answer is: "
+        console.log("wroetnjp");
+      }
+      nextButton.disabled = false;
+    }
+    function nextQuestion(){
+    i++;
+      if(i < arr.length){
+        correctAns.innerHTML = "";
+        document.getElementById("corAnsHeading").innerHTML=""
+        questionDisplay.innerHTML = arr[i][0];
+        inputText.style.backgroundColor = "white";
+        inputText.value = '';
+        checkButton.disabled = false;
+        nextButton.disabled = true;
+      }
+      else{
+        nextButton.disabled = false;
+        numCorrect=0;
+        numWrong=0;
+      }
+
+    }
+  </script>

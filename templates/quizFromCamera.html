@@ -1,0 +1,46 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<link href="/static/new-age.css" rel="stylesheet">
+
+
+</div  class="form-group">
+<video id="player" style="vertical-align: center; margin:auto; padding-top: 200px; padding-left: 200px" controls autoplay></video>
+
+<canvas id="canvas" width= height=10></canvas>
+
+<button id="capture" class="btn btn-info">Capture</button>
+</div>
+
+
+<script>
+  const player = document.getElementById('player');
+  //const canvas = document.getElementById('canvas');
+  const context = canvas.getContext('2d');
+  const captureButton = document.getElementById('capture');
+
+  const constraints = {
+    video: true,
+  };
+
+  captureButton.addEventListener('click', () => {
+    // Draw the video frame to the canvas.
+    context.drawImage(player, 0, 0, canvas.width, canvas.height);
+    var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");  // here is the most important part because if you dont replace you will get a DOM 18 exception.
+    window.location.href=image;
+  });
+
+  // Attach the video stream to the video element and autoplay.
+  navigator.mediaDevices.getUserMedia(constraints)
+    .then((stream) => {
+      player.srcObject = stream;
+    });
+
+
+
+
+</script>
+
+</html>
